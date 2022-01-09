@@ -39,7 +39,8 @@ def trade(ticker, is_held, start, order):
             qty = caller.qty(ticker, api)
             caller.order(ticker, qty, order, api)
 
-        print("Hold")
+        else:
+            print("Hold")
             
     
     return is_held, start, order

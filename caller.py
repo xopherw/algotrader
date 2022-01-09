@@ -66,6 +66,7 @@ def order(ticker, qty, order, api):
             "time_in_force" :   "day"
         }
         r = requests.post(url + post, headers=headers, json=params)
+        print("Status Code:", r.status_code)
     except Exception as e:
         print("Order Error:", e)
         pass
