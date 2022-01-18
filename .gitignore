@@ -4,3 +4,4 @@ job.ipynb
 mark.ipynb
 alpaca_data.ipynb
 test.py
+__pycache__

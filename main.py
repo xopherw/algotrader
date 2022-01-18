@@ -33,10 +33,11 @@ while True:
             # Use updated current time to minus next open time to get seconds until next buying time
             interval = (buying_time - caller.dt.datetime.now(caller.pytz.timezone('America/New_York')).replace(tzinfo=None)).seconds
             next = ny_today + caller.dt.timedelta(seconds=interval)
-            print(f"Market open, run algorithm time at {next}") 
+            if((buying_time - ny_today).total_seconds() < 8*3600):
+                print(f"Market open, run algorithm time at {next}") 
 
             if(run):
-                print("Market is closing soon, running algorithm")
+                print("Market is closing soon, running algorithm at {ny_today}")
                 # Run algoruthm
                 is_held, start, order = trade(ticker, is_held, start, order)
                 run = False
