@@ -83,7 +83,7 @@ def is_market_open(api):
         r = requests.get(url + post, headers=headers).json()
         return r["is_open"]
     except Exception as e:
-        print("Market Open Error:", e)
+        print("Is Market Open Error:", e)
         pass
 
 # Call to list bought stocks
