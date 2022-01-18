@@ -5,3 +5,4 @@ mark.ipynb
 alpaca_data.ipynb
 test.py
 __pycache__
+.DS_Store
