@@ -37,7 +37,7 @@ while True:
                 print(f"Market open, run algorithm time at {next}") 
 
             if(run):
-                print("Market is closing soon, running algorithm at {ny_today}")
+                print(f"Market is closing soon, running algorithm at {ny_today}")
                 # Run algoruthm
                 is_held, start, order = trade(ticker, is_held, start, order)
                 run = False
