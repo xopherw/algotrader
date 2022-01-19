@@ -17,7 +17,7 @@ while True:
     market_hours = ny_today.time() >= caller.market_open_time().time() and (ny_today.time() < caller.market_close_time().time())
 
     # This variable of 'minutes' will change according to stock I decide when to buy and sell
-    buying_time = caller.market_close_time() - caller.dt.timedelta(minutes=2)
+    buying_time = caller.market_close_time() - caller.dt.timedelta(seconds=5)
     
     next_open_time = (caller.next_open_time(api) - ny_today).total_seconds()
 
@@ -33,7 +33,7 @@ while True:
             # Use updated current time to minus next open time to get seconds until next buying time
             interval = (buying_time - caller.dt.datetime.now(caller.pytz.timezone('America/New_York')).replace(tzinfo=None)).seconds
             next = ny_today + caller.dt.timedelta(seconds=interval)
-            if((buying_time - ny_today).total_seconds() < 8*3600):
+            if((next - ny_today).total_seconds() < 8*3600):
                 print(f"Market open, run algorithm time at {next}") 
 
             if(run):
