@@ -3,7 +3,6 @@ from algo import *
 
 run = False
 is_held = False
-start = True
 order = False
 ticker = "mark"
 
@@ -39,7 +38,7 @@ while True:
             if(run):
                 print(f"Market is closing soon, running algorithm at {ny_today}")
                 # Run algoruthm
-                is_held, start, order = trade(ticker, is_held, start, order)
+                is_held, order = trade(ticker, is_held, order)
                 run = False
                 # Use updated current time to minus next open time to get seconds until next open
                 interval = next_open_time
