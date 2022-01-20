@@ -71,21 +71,6 @@ def order(ticker, qty, order, api):
         print("Order Error:", e)
         pass
 
-# Call for market opens
-def is_market_open(api):
-    try:
-        url = "https://paper-api.alpaca.markets"
-        post = "/v2/clock"
-        headers = {
-            "APCA-API-KEY-ID" : api.alpaca_api,
-            "APCA-API-SECRET-KEY" : api.alpaca_secret,
-        }
-        r = requests.get(url + post, headers=headers).json()
-        return r["is_open"]
-    except Exception as e:
-        print("Is Market Open Error:", e)
-        pass
-
 # Call to list bought stocks
 def stock_list(api):
     try:
@@ -197,4 +182,3 @@ def next_open_time(api):
 def dateconvert(date):
     d = dt.datetime.strptime(date, "%Y-%m-%d")
     return d.date()
-
