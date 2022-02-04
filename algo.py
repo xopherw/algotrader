@@ -35,4 +35,4 @@ def trade(ticker, is_held):
         else:
             print(f"Hold {ticker[i]}")
                 
-        time.wait(3.5)
+        time.sleep(3.5)
