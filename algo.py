@@ -29,8 +29,8 @@ def trade(ticker, is_held):
         elif(is_held[i] and (sell_logic_1 or sell_logic_2)):
             print(f"Sell {ticker[i]}")
             is_held[i] = False
-            qty = caller.qty(ticker, api)
-            caller.order(ticker, qty, False, api)
+            qty = caller.qty(ticker[i], api)
+            caller.order(ticker[i], qty, False, api)
 
         else:
             print(f"Hold {ticker[i]}")
