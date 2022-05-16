@@ -8,7 +8,7 @@ def trade(ticker, is_held):
         data = caller.twelve_data(ticker[i], api)
 
         # Constants (change stock_divider to change the number of stocks to buy and add 1 more to the number of stocks)
-        stock_divider = 3 - len(caller.stock_list(api))
+        stock_divider = 3.02 - len(caller.stock_list(api))
         money = caller.money(api)/stock_divider
         
 
@@ -35,4 +35,4 @@ def trade(ticker, is_held):
         else:
             print(f"Hold {ticker[i]}")
                 
-        time.sleep(3.5)
+        time.sleep(2.5)

@@ -3,7 +3,7 @@ from algo import *
 
 run = False
 is_held = [False, False, False]
-ticker = ["best", "job", "mark"]
+ticker = ['SNDL', 'ALNA', 'VERB']
 
 
 #--- Main loop to check if market is open, holiday, weekend, and when to execute orders ---#
@@ -15,7 +15,7 @@ while True:
     market_hours = ny_today.time() >= caller.market_open_time().time() and (ny_today.time() < caller.market_close_time().time())
 
     # This variable of 'minutes' will change according to stock I decide when to buy and sell
-    buying_time = caller.market_close_time() - caller.dt.timedelta(seconds=12)
+    buying_time = caller.market_close_time() - caller.dt.timedelta(seconds=8.5)
     
     next_open_time = (caller.next_open_time(api) - ny_today).total_seconds()
 
@@ -36,7 +36,7 @@ while True:
 
             if(run):
                 print(f"Market is closing soon, running algorithm at {ny_today}")
-                # Run algoruthm
+                # Run algorithm
                 trade(ticker, is_held)
                 run = False
                 # Use updated current time to minus next open time to get seconds until next open
