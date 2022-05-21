@@ -38,44 +38,6 @@ def nsdq_data(ticker, api):
         print("NSDQ Data Error: ", e)
         pass
 
-
-# Call for raw data (past data) 
-# NOTE: THIS CODE IS UNUSABLE PLEASE USE NASDAQ API.
-# def twelve_data(ticker, api):
-#     try:
-#         today = dt.datetime.now(pytz.timezone('US/Eastern')).date()
-#         price = current_price(ticker.upper())
-#         new_data = {"datetime" : today, "close" : price}
-#         past = today - relativedelta(months = 12)
-#         params = {
-#             "symbol"        :   ticker.upper(),
-#             "interval"      :   "1day",
-#             "start_date"    :   str(past),
-#             "end_date"      :   str(today),
-#             "apikey"        :   api.twelve_data
-#         }
-#         # Retrieve
-#         url = f"https://api.twelvedata.com/time_series"
-#         r = requests.get(url, params=params).json()
-        
-#         # Clean
-#         data = pd.DataFrame(r['values'][::-1]).drop(columns=['volume', 'high', 'low', 'open'], axis=1) # Reverse and convert to DataFrame
-#         data[['close']] = data[['close']].astype(float) # Convert 'close' to float type
-#         data = data.append(new_data, ignore_index=True) # Append latest data (aproaching closing time)
-
-#         # Calculate and add ema3, ema10, and slope to data
-#         ema3 = data['close'].ewm(span=3, adjust=False).mean() 
-#         ema10 = data['close'].ewm(span=10, adjust=False).mean() 
-#         slope= np.gradient(data['close']) 
-#         data['ema3'] = ema3 
-#         data['ema10'] = ema10 
-#         data['slope'] = slope
-
-#         return data
-#     except Exception as e:
-#         print("12 Data Error:", e)
-#         pass
-
 # Call for current price
 def current_price(ticker):
     try:
@@ -176,31 +138,19 @@ def calendar(date, api):
         print("Calendar Error:", e)
         pass
 
-# Call for opening hour
-def market_open_time():
+# Call for open/close time (params: "Open" or "Clos" only, case senstive and no 'e' for "Clos")
+def market_hour(market_time):
     try:
         url = "https://api.nasdaq.com/api/market-info"
         headers = {'user-agent' : "-"}
         r = requests.get(url, headers=headers).json()['data']
-        open = dt.datetime.strptime(r['marketOpeningTime'].strip(' ET'),"%b %d, %Y %I:%M %p")
-        return open
+        hour = dt.datetime.strptime(r[f'market{market_time}ingTime'].strip(' ET'),"%b %d, %Y %I:%M %p")
+        return hour
     except Exception as e:
-        print("Market open time Error:", e)
+        print("Market time Error:", e)
         pass
 
-# Call for closing hour
-def market_close_time():
-    try:
-        url = "https://api.nasdaq.com/api/market-info"
-        headers = {'user-agent' : "-"}
-        r = requests.get(url, headers=headers).json()['data']
-        close = dt.datetime.strptime(r['marketClosingTime'].strip(' ET'),"%b %d, %Y %I:%M %p")
-        return close
-    except Exception as e:
-        print("Market close time Error:", e)
-        pass
-
-# Call for next closing time
+# Call for next open time
 def next_open_time(api):
     try:
         url = "https://paper-api.alpaca.markets"
