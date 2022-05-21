@@ -2,9 +2,14 @@ import time
 from algo import *
 
 run = False
-is_held = [False, False, False]
-ticker = ['SNDL', 'ALNA', 'VERB']
+tickers = {'SNDL' : False, 'ALNA' : False, 'VERB' : False}
+asset = caller.stock_list(api)
 
+#--- Check asset for continuitiy ---#
+if asset != []:
+    for i in asset:
+        if(i['symbol'] in tickers):
+            tickers[i['symbol']] = True
 
 #--- Main loop to check if market is open, holiday, weekend, and when to execute orders ---#
 while True: 
@@ -25,7 +30,7 @@ while True:
         print(f"Weekend, next open time at {next}") 
         interval = next_open_time
     else:
-        #--- Check if market is open ---#
+        #--- Check if market is open ---#       
         if(market_hours and is_market_open):
             """MARKET IS OPEN"""
             # Use updated current time to minus next open time to get seconds until next buying time
@@ -37,7 +42,7 @@ while True:
             if(run):
                 print(f"Market is closing soon, running algorithm at {ny_today}")
                 # Run algorithm
-                trade(ticker, is_held)
+                trade(tickers)
                 run = False
                 # Use updated current time to minus next open time to get seconds until next open
                 interval = next_open_time

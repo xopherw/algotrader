@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 
 # Call for raw data (NASDAQ)
-def nsdq_data(ticker, api):
+def nsdq_data(ticker):
     try:
         today = dt.datetime.now(pytz.timezone('US/Eastern')).date()
         past = today - relativedelta(years= 5)
@@ -132,7 +132,7 @@ def calendar(date, api):
             "end"       :   date,
         }
         r = requests.get(url + post, headers=headers, params=params).json()
-        d = dateconvert(r[0]["date"])
+        d =  dt.datetime.strptime(r[0]["date"], "%Y-%m-%d")
         return d
     except Exception as e:
         print("Calendar Error:", e)
@@ -165,8 +165,3 @@ def next_open_time(api):
     except Exception as e:
         print("Next open time Error:", e)
         pass
-
-# Convert string date to date object
-def dateconvert(date):
-    d = dt.datetime.strptime(date, "%Y-%m-%d")
-    return d.date()
