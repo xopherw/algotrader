@@ -8,7 +8,7 @@ def trade(ticker):
         data = caller.nsdq_data(i)
 
         # Constants (change stock_divider to change the number of stocks to buy and add 1 more to the number of stocks)
-        stock_divider = 3.02 - len(caller.stock_list(api))
+        stock_divider = 4 - len(caller.stock_list(api))
         money = round(caller.money(api)/stock_divider,2)
         
 
