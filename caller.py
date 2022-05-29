@@ -132,7 +132,7 @@ def calendar(date, api):
             "end"       :   date,
         }
         r = requests.get(url + post, headers=headers, params=params).json()
-        d =  dt.datetime.strptime(r[0]["date"], "%Y-%m-%d")
+        d = r[0]["date"]
         return d
     except Exception as e:
         print("Calendar Error:", e)

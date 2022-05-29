@@ -15,7 +15,7 @@ if asset != []:
 while True: 
     
     ny_today = caller.dt.datetime.now(caller.pytz.timezone('America/New_York')).replace(tzinfo=None)
-    is_market_open = caller.calendar(ny_today.strftime("%Y-%m-%d"), api) == ny_today.date()
+    is_market_open = caller.calendar(ny_today, api) == ny_today.date()
     
     market_hours = ny_today.time() >= caller.market_hour("Open").time() and (ny_today.time() < caller.market_hour("Clos").time())
 
@@ -30,7 +30,8 @@ while True:
         print(f"Weekend, next open time at {next}") 
         interval = next_open_time
     else:
-        #--- Check if market is open ---#       
+        #--- Check if market is open ---#
+        print("marker_hours: " + market_hours + "\nis_market_open: " + is_market_open)     
         if(market_hours and is_market_open):
             """MARKET IS OPEN"""
             # Use updated current time to minus next open time to get seconds until next buying time
