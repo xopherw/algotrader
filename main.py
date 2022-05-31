@@ -31,7 +31,7 @@ while True:
         interval = next_open_time
     else:
         #--- Check if market is open ---#
-        print("marker_hours: " + market_hours + "\nis_market_open: " + is_market_open)     
+        print("marker_hours: " + str(market_hours) + "\nis_market_open: " + str(is_market_open))     
         if(market_hours and is_market_open):
             """MARKET IS OPEN"""
             # Use updated current time to minus next open time to get seconds until next buying time
