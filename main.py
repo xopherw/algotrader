@@ -32,7 +32,7 @@ while True:
     else:
         #--- Check if market is open ---#
         print("marker_hours: " + str(market_hours) + "\nis_market_open: " + str(is_market_open))     
-        if(market_hours and is_market_open):
+        if(market_hours):
             """MARKET IS OPEN"""
             # Use updated current time to minus next open time to get seconds until next buying time
             interval = (buying_time - caller.dt.datetime.now(caller.pytz.timezone('America/New_York')).replace(tzinfo=None)).seconds
@@ -53,15 +53,15 @@ while True:
             else:
                 run = True
             
-        elif(market_hours and not is_market_open):
-            next = ny_today + caller.dt.timedelta(seconds=interval)
-            print(f"Market on holiday, next open time at {next}") 
-            interval = next_open_time
+        # elif(market_hours and not is_market_open):
+        #     next = ny_today + caller.dt.timedelta(seconds=interval)
+        #     print(f"Market on holiday, next open time at {next}") 
+        #     interval = next_open_time
 
-        elif(not market_hours and is_market_open):
-            next = ny_today + caller.dt.timedelta(seconds=next_open_time)
-            print(f"After hours, next run time at {next}") 
-            interval =  next_open_time
+        # elif(not market_hours and is_market_open):
+        #     next = ny_today + caller.dt.timedelta(seconds=next_open_time)
+        #     print(f"After hours, next run time at {next}") 
+        #     interval =  next_open_time
 
         #--- When market is definitely closed ---#
         else:
