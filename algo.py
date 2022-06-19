@@ -7,8 +7,8 @@ def trade(ticker):
         # Call API to get a year of historical data till today
         data = caller.nsdq_data(i)
 
-        # Constants (change stock_divider to change the number of stocks to buy and add 1 more to the number of stocks)
-        stock_divider = 4 - len(caller.stock_list(api))
+        # Constants
+        stock_divider = len(ticker) + 1 - len(caller.stock_list(api))
         money = round(caller.money(api)/stock_divider,2)
         
 

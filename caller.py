@@ -21,7 +21,7 @@ def nsdq_data(ticker):
 
         # data cleaning and formatting
         # Remove unnecessary data and reverse order
-        data = pd.DataFrame(r["data"]["tradesTable"]["rows"][::-1]).drop(columns=['volume', 'high', 'low', 'open'], axis=1) 
+        data = pd.DataFrame(r["data"]["tradesTable"]["rows"][::-1])
         data[['close']] = data[['close']].replace('\$|,', '', regex=True).astype(float) # Convert 'close' to float type
         data = data.append(new_data, ignore_index=True) # Append latest data (aproaching closing time)
 
