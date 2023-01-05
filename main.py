@@ -2,7 +2,7 @@ import time
 from algo import *
 
 run = False
-tickers = {'SNDL' : False, 'ALNA' : False, 'VERB' : False}
+tickers = {'STOCK1' : False, 'STOCK2' : False, 'STOCK3' : False}
 asset = caller.stock_list(api)
 
 #--- Check asset for continuitiy ---#
@@ -19,8 +19,8 @@ while True:
     
     market_hours = ny_today.time() >= caller.market_hour("Open").time() and (ny_today.time() < caller.market_hour("Clos").time())
 
-    # This variable of 'minutes' will change according to stock I decide when to buy and sell
-    buying_time = caller.market_hour("Clos") - caller.dt.timedelta(seconds=8.75)
+    # This variable of 'seconds' will change according to stock I decide when to buy and sell
+    buying_time = caller.market_hour("Clos") - caller.dt.timedelta(seconds=3)
     
     next_open_time = (caller.next_open_time(api) - ny_today).total_seconds()
 

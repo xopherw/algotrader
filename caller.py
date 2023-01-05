@@ -3,17 +3,17 @@ from dateutil.relativedelta import relativedelta
 
 
 # Call for raw data (NASDAQ)
-def nsdq_data(ticker):
+def nsdq_data(ticker, years_frame=5, asset_class="stocks"):
     try:
         today = dt.datetime.now(pytz.timezone('US/Eastern')).date()
-        past = today - relativedelta(years= 5)
-        price = current_price(ticker.upper())
+        past = today - relativedelta(years= years_frame)
+        price = current_price(ticker.upper(), asset_class)
         new_data = {"date" : today.strftime("%m/%d/%Y"), "close" : price}
         headers = {'user-agent' : "-"}
         url = "https://api.nasdaq.com/api"
         post = f"/quote/{ticker.upper()}/historical"
         params = {
-            "assetclass" : "stocks",
+            "assetclass" : asset_class,
             "fromdate"    :   past,
             "limit"      :   '100000',
         }
@@ -26,22 +26,23 @@ def nsdq_data(ticker):
         data = data.append(new_data, ignore_index=True) # Append latest data (aproaching closing time)
 
         # Calculate and add ema3, ema10, and slope to data
-        ema3 = data['close'].ewm(span=3, adjust=False).mean() 
-        ema10 = data['close'].ewm(span=10, adjust=False).mean() 
+        ema7 = data['close'].ewm(span=7, adjust=False).mean() 
+        ema14 = data['close'].ewm(span=14, adjust=False).mean() 
         slope= np.gradient(data['close']) 
-        data['ema3'] = ema3 
-        data['ema10'] = ema10 
+        data['ema7'] = ema7
+        data['ema14'] = ema14
         data['slope'] = slope
 
+        
         return data
     except Exception as e:
         print("NSDQ Data Error: ", e)
         pass
 
 # Call for current price
-def current_price(ticker):
+def current_price(ticker, asset_class="stocks"):
     try:
-        url = f"https://api.nasdaq.com/api/quote/{ticker}/info?assetclass=stocks"
+        url = f"https://api.nasdaq.com/api/quote/{ticker}/info?assetclass={asset_class}"
         headers = {'user-agent' : "-"}
         r = requests.get(url, headers=headers).json()['data']
         return round(float(r['primaryData']['lastSalePrice'].strip('$')), 2)
