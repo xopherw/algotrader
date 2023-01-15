@@ -1,14 +1,14 @@
-import requests, datetime as dt, numpy as np, pandas as pd, pytz
+import requests, datetime as dt, numpy as np, pytz, time
 from dateutil.relativedelta import relativedelta
-
 
 # Call for raw data (NASDAQ)
 def nsdq_data(ticker, years_frame=5, asset_class="stocks"):
+    startTime = time.time()
     try:
         today = dt.datetime.now(pytz.timezone('US/Eastern')).date()
         past = today - relativedelta(years= years_frame)
         price = current_price(ticker.upper(), asset_class)
-        new_data = {"date" : today.strftime("%m/%d/%Y"), "close" : price}
+        new_data = {"date" : today.strftime("%m/%d/%Y"), "open" : price}
         headers = {'user-agent' : "-"}
         url = "https://api.nasdaq.com/api"
         post = f"/quote/{ticker.upper()}/historical"
@@ -17,27 +17,38 @@ def nsdq_data(ticker, years_frame=5, asset_class="stocks"):
             "fromdate"    :   past,
             "limit"      :   '100000',
         }
-        r = requests.get(url + post, headers=headers, params=params).json()
-
-        # data cleaning and formatting
-        # Remove unnecessary data and reverse order
-        data = pd.DataFrame(r["data"]["tradesTable"]["rows"][::-1])
-        data[['close']] = data[['close']].replace('\$|,', '', regex=True).astype(float) # Convert 'close' to float type
-        data = data.append(new_data, ignore_index=True) # Append latest data (aproaching closing time)
-
-        # Calculate and add ema3, ema10, and slope to data
-        ema7 = data['close'].ewm(span=7, adjust=False).mean() 
-        ema14 = data['close'].ewm(span=14, adjust=False).mean() 
-        slope= np.gradient(data['close']) 
-        data['ema7'] = ema7
-        data['ema14'] = ema14
-        data['slope'] = slope
-
+        r = requests.get(url + post, headers=headers, params=params).json()["data"]["tradesTable"]["rows"][::-1]
+        for i in range(len(r)):
+            r[i]["open"] = float(r[i]["open"].strip("$"))
+            if (i == 0):
+                r[i]["emaHigh"], r[i]["emaLow"] = r[i]["open"], r[i]["open"]
+            else:
+                r[i]["emaLow"] = ema(r, i=i, timeframe=7, ema="emaLow")
+                r[i]["emaHigh"] = ema(r, i=i, timeframe=14, ema="emaHigh")
+                
+        r.append(new_data) # Append latest data (aproaching closing time)
+        emaHigh = ema(r, i=-1, timeframe=14, ema="emaHigh")
+        emaLow = ema(r, i=-1, timeframe=7, ema="emaLow")
+        r[-1]["emaHigh"], r[-1]["emaLow"] = emaHigh, emaLow
         
-        return data
+        # # Calculate slope  data
+        slope= np.gradient([i["open"] for i in r])[-1]
+
+        print(time.time() - startTime)
+        return {"emaLow" : r[-1]["emaLow"], "emaHigh" : r[-1]["emaHigh"], "slope" : slope}
     except Exception as e:
         print("NSDQ Data Error: ", e)
         pass
+
+# Calculate EWMA
+def ema(data, timeframe, ema ,i):
+    k = 2/(timeframe + 1.0)
+    a = 1-k
+    price = data[i]["open"]
+    ema_previous = data[i-1][ema]
+    ema = price*k + a*ema_previous
+    return ema
+
 
 # Call for current price
 def current_price(ticker, asset_class="stocks"):

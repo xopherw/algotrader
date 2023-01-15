@@ -20,7 +20,7 @@ while True:
     market_hours = ny_today.time() >= caller.market_hour("Open").time() and (ny_today.time() < caller.market_hour("Clos").time())
 
     # This variable of 'seconds' will change according to stock I decide when to buy and sell
-    buying_time = caller.market_hour("Clos") - caller.dt.timedelta(seconds=3)
+    buying_time = caller.market_hour("Open")
     
     next_open_time = (caller.next_open_time(api) - ny_today).total_seconds()
 
@@ -39,7 +39,7 @@ while True:
                 print(f"Market open, run algorithm time at {next}") 
 
             if(run):
-                print(f"Market is closing soon, running algorithm at {ny_today}")
+                print(f"Market is opened, running algorithm at {ny_today}")
                 # Run algorithm
                 trade(tickers)
                 run = False
@@ -50,17 +50,6 @@ while True:
             
             else:
                 run = True
-        
-        #### ---- Outdated and discontinued ---- ####
-        # elif(market_hours and not is_market_open):
-        #     next = ny_today + caller.dt.timedelta(seconds=interval)
-        #     print(f"Market on holiday, next open time at {next}") 
-        #     interval = next_open_time
-
-        # elif(not market_hours and is_market_open):
-        #     next = ny_today + caller.dt.timedelta(seconds=next_open_time)
-        #     print(f"After hours, next run time at {next}") 
-        #     interval =  next_open_time
 
         #--- When market is definitely closed ---#
         else:

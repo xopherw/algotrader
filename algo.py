@@ -13,19 +13,20 @@ def trade(ticker):
         
         print("ema 7: " + str(data['ema7'].iloc[-1]) + " | ema14: " + str(data['ema14'].iloc[-1]) + " | slope: " + str(data['slope'].iloc[-1]))
 
-        # # Logics (discont)
+        # # Logics (discontinue)
         # buy_logic_1 = (data['ema7'].iloc[-1] > data['ema10'].iloc[-1] and data['slope'].iloc[-1] > 0)
         # buy_logic_2 = (data['ema7'].iloc[-1] < data['ema10'].iloc[-1] and data['slope'].iloc[-1] > 0)
         # sell_logic_1 = (data['ema7'].iloc[-1] < data['ema10'].iloc[-1] and data['slope'].iloc[-1] < 0)
         # sell_logic_2 = (data['ema7'].iloc[-1] > data['ema10'].iloc[-1] and data['slope'].iloc[-1] < 0)
 
-        buy_logic = (data["ema7"].iloc[-1] > data["ema14"].iloc[-1] or data["slope"].iloc[-1] > 0)
-        sell_logic = (data["ema7"].iloc[-1] < data["ema14"].iloc[-1] and data["slope"].iloc[-1] < 0)
+        buy_logic = (data["emaLow"] > data["emaHigh"] or data["slope"] > 0)
+        sell_logic = (data["emaLow"] < data["emaHigh"] and data["slope"] < 0)
+
         # Buy
         if(not(ticker[i]) and (buy_logic)):
             print(f"Buy {i}")
             ticker[i] = True
-            qty = int( money / data['close'].iloc[-1])
+            qty = int( money / data['open'])
             caller.order(i, qty, True, api)
 
         # Sell
