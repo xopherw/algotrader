@@ -1,6 +1,9 @@
 import requests, datetime as dt, numpy as np, pytz, time
 from dateutil.relativedelta import relativedelta
 
+#### Constant
+alpaca_url = "https://paper-api.alpaca.markets"
+
 # Call for raw data (NASDAQ)
 def nsdq_data(ticker, years_frame=5, asset_class="stocks"):
     startTime = time.time()
@@ -65,7 +68,7 @@ def current_price(ticker, asset_class="stocks"):
 def order(ticker, qty, order, api):
     try:
         side = "buy" if order else "sell"
-        url = "https://paper-api.alpaca.markets"
+        url = alpaca_url
         post = "/v2/orders"
         headers = {
             "APCA-API-KEY-ID" : api.alpaca_api,
@@ -87,7 +90,7 @@ def order(ticker, qty, order, api):
 # Call to list bought stocks
 def stock_list(api):
     try:
-        url = "https://paper-api.alpaca.markets"
+        url = alpaca_url
         post = "/v2/positions"
         headers = {
             "APCA-API-KEY-ID" : api.alpaca_api,
@@ -102,7 +105,7 @@ def stock_list(api):
 # Call for stock quantity bought
 def qty(ticker, api):
     try:
-        url = "https://paper-api.alpaca.markets"
+        url = alpaca_url
         post = "/v2/positions/" + ticker.upper()
         headers = {
             "APCA-API-KEY-ID" : api.alpaca_api,
@@ -117,7 +120,7 @@ def qty(ticker, api):
 # Call for buying power
 def money(api):
     try:
-        url = "https://paper-api.alpaca.markets"
+        url = alpaca_url
         post = "/v2/account"
         headers = {
             "APCA-API-KEY-ID" : api.alpaca_api,
@@ -133,7 +136,7 @@ def money(api):
 # Call for calendar (check if holiday)
 def calendar(date, api):
     try:
-        url = "https://paper-api.alpaca.markets"
+        url = alpaca_url
         post = f"/v2/calendar"
         headers = {
             "APCA-API-KEY-ID" : api.alpaca_api,
@@ -165,7 +168,7 @@ def market_hour(market_time):
 # Call for next open time
 def next_open_time(api):
     try:
-        url = "https://paper-api.alpaca.markets"
+        url = alpaca_url
         post = f"/v2/clock"
         headers = {
             "APCA-API-KEY-ID" : api.alpaca_api,
