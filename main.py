@@ -20,7 +20,7 @@ while True:
     market_hours = ny_today.time() >= caller.market_hour("Open").time() and (ny_today.time() < caller.market_hour("Clos").time())
 
     # This variable of 'seconds' will change according to stock I decide when to buy and sell
-    buying_time = caller.market_hour("Open")
+    # buying_time = caller.market_hour("Open")
     
     next_open_time = (caller.next_open_time(api) - ny_today).total_seconds()
 
@@ -32,24 +32,27 @@ while True:
     else:
         #--- Check if market is open ---#
         if(market_hours):
+            # NOTE: No longer the case since it is buying during open time
             # Use updated current time to minus next open time to get seconds until next buying time
-            interval = (buying_time - caller.dt.datetime.now(caller.pytz.timezone('America/New_York')).replace(tzinfo=None)).seconds
-            next = ny_today + caller.dt.timedelta(seconds=interval)
-            if((next - ny_today).total_seconds() < 8*3600):
-                print(f"Market open, run algorithm time at {next}") 
+            # interval = (buying_time - caller.dt.datetime.now(caller.pytz.timezone('America/New_York')).replace(tzinfo=None)).seconds
+            # next = ny_today + caller.dt.timedelta(seconds=interval)
+            # if((next - ny_today).total_seconds() < 8*3600):
+            #     print(f"Market open, run algorithm time at {next}") 
 
             if(run):
                 print(f"Market is opened, running algorithm at {ny_today}")
-                # Run algorithm
+            # Run algorithmno
+
                 trade(tickers)
                 run = False
-                # Use updated current time to minus next open time to get seconds until next open
+            # Use updated current time to minus next open time to get seconds until next open
                 interval = next_open_time
                 next = ny_today + caller.dt.timedelta(seconds=interval)
                 print(f"Algorithm ran, next open time at {next}")
             
             else:
                 run = True
+                print(f"Market close, next run time at {next}") 
 
         #--- When market is definitely closed ---#
         else:
@@ -58,4 +61,3 @@ while True:
             interval = next_open_time
 
     time.sleep(interval)
-
