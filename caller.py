@@ -2,7 +2,7 @@ import requests, datetime as dt, numpy as np, pytz, time
 from dateutil.relativedelta import relativedelta
 
 #### Constant
-alpaca_url = "https://paper-api.alpaca.markets"
+alpaca_url = "https://api.alpaca.markets"
 
 # Call for raw data (NASDAQ)
 def nsdq_data(ticker, years_frame=5, asset_class="stocks"):

@@ -2,7 +2,7 @@ import time
 from algo import *
 
 run = False
-tickers = {'STOCK1' : False, 'STOCK2' : False, 'STOCK3' : False}
+tickers = {'WETG' : False, 'AULT' : False, 'RUBY' : False}
 asset = caller.stock_list(api)
 
 #--- Check asset for continuitiy ---#
