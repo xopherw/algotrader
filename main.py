@@ -17,7 +17,8 @@ while True:
     ny_today = caller.dt.datetime.now(caller.pytz.timezone('America/New_York')).replace(tzinfo=None)
     is_market_open = caller.calendar(ny_today, api) == ny_today.date()
     
-    market_hours = ny_today.time() >= caller.market_hour("Open").time() and (ny_today.time() < caller.market_hour("Clos").time())
+    market_hours = ny_today.time() >= caller.market_hour("Open").time() 
+    # and (ny_today.time() < caller.market_hour("Clos").time())
 
     # This variable of 'seconds' will change according to stock I decide when to buy and sell
     buying_time = caller.market_hour("Open")
