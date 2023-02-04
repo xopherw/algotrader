@@ -43,7 +43,6 @@ while True:
             if(run):
                 print(f"Market is opened, running algorithm at {ny_today}")
             # Run algorithmno
-
                 trade(tickers)
                 run = False
             # Use updated current time to minus next open time to get seconds until next open
@@ -53,12 +52,13 @@ while True:
             
             else:
                 run = True
-                print(f"Market close, next run time at {next}") 
+                print(f"Market open but no actions, next run time at {next}") 
 
         #--- When market is definitely closed ---#
         else:
             next = ny_today + caller.dt.timedelta(seconds=next_open_time)
             print(f"Market close, next run time at {next}") 
+            run = True
             interval = next_open_time
 
     time.sleep(interval)
