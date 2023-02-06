@@ -2,7 +2,7 @@ import requests, datetime as dt, numpy as np, pytz, time
 from dateutil.relativedelta import relativedelta
 
 #### Constant
-alpaca_url = "https://paper-api.alpaca.markets"
+alpaca_url = "https://api.alpaca.markets"
 
 # Call for raw data (NASDAQ)
 def nsdq_data(ticker, years_frame=5, asset_class="stocks"):
@@ -131,26 +131,6 @@ def money(api):
         return money
     except Exception as e:
         print("Buying Power Error:", e)
-        pass
-
-# Call for calendar (check if holiday)
-def calendar(date, api):
-    try:
-        url = alpaca_url
-        post = f"/v2/calendar"
-        headers = {
-            "APCA-API-KEY-ID" : api.alpaca_api,
-            "APCA-API-SECRET-KEY" : api.alpaca_secret,
-        }
-        params = {
-            "start"     :   date,
-            "end"       :   date,
-        }
-        r = requests.get(url + post, headers=headers, params=params).json()
-        d = r[0]["date"]
-        return d
-    except Exception as e:
-        print("Calendar Error:", e)
         pass
 
 # Call for open/close time (params: "Open" or "Clos" only, case senstive and no 'e' for "Clos")
