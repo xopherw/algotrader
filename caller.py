@@ -38,7 +38,7 @@ def nsdq_data(ticker, years_frame=5, asset_class="stocks"):
         slope= np.gradient([i["open"] for i in r])[-1]
 
         print(time.time() - startTime)
-        return {"emaLow" : r[-1]["emaLow"], "emaHigh" : r[-1]["emaHigh"], "slope" : slope}
+        return {"open" : r[-1]["open"], "emaLow" : r[-1]["emaLow"], "emaHigh" : r[-1]["emaHigh"], "slope" : slope}
     except Exception as e:
         print("NSDQ Data Error: ", e)
         pass

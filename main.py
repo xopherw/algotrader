@@ -36,7 +36,7 @@ while True:
             # next = ny_today + caller.dt.timedelta(seconds=interval)
             # if((next - ny_today).total_seconds() < 8*3600):
             #     print(f"Market open, run algorithm time at {next}") 
-
+            run = True
             if(run):
                 print(f"Market is opened, running algorithm at {ny_today}")
             # Run algorithmno

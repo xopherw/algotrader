@@ -9,9 +9,9 @@ def trade(ticker):
 
         # Constants
         stock_divider = len(ticker) + 1 - len(caller.stock_list(api))
-        money = round(caller.money(api)/stock_divider,2)
+        money = int(caller.money(api)/len(ticker))
         
-        print("ema 7: " + str(data['ema7']) + " | ema14: " + str(data['ema14']) + " | slope: " + str(data['slope']))
+        print("ema Low: " + str(data['emaLow']) + " | ema High: " + str(data['emaHigh']) + " | slope: " + str(data['slope']))
 
         # # Logics (discontinue)
         # buy_logic_1 = (data['ema7'].iloc[-1] > data['ema10'].iloc[-1] and data['slope'].iloc[-1] > 0)
