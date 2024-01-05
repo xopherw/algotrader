@@ -1,47 +1,11 @@
-import requests, datetime as dt, numpy as np, pytz, time
+import requests as req, numpy as np, pandas as pd, pytz, datetime as dt, api
+from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
 
-#### Constant
-alpaca_url = "https://api.alpaca.markets"
+#### Constant  https://data.alpaca.markets/v2/stocks/auctions
 
-# Call for raw data (NASDAQ)
-def nsdq_data(ticker, years_frame=5, asset_class="stocks"):
-    startTime = time.time()
-    try:
-        today = dt.datetime.now(pytz.timezone('US/Eastern')).date()
-        past = today - relativedelta(years= years_frame)
-        price = current_price(ticker.upper(), asset_class)
-        new_data = {"date" : today.strftime("%m/%d/%Y"), "open" : price}
-        headers = {'user-agent' : "-"}
-        url = "https://api.nasdaq.com/api"
-        post = f"/quote/{ticker.upper()}/historical"
-        params = {
-            "assetclass" : asset_class,
-            "fromdate"    :   past,
-            "limit"      :   '100000',
-        }
-        r = requests.get(url + post, headers=headers, params=params).json()["data"]["tradesTable"]["rows"][::-1]
-        for i in range(len(r)):
-            r[i]["open"] = float(r[i]["open"].strip("$"))
-            if (i == 0):
-                r[i]["emaHigh"], r[i]["emaLow"] = r[i]["open"], r[i]["open"]
-            else:
-                r[i]["emaLow"] = ema(r, i=i, timeframe=7, ema="emaLow")
-                r[i]["emaHigh"] = ema(r, i=i, timeframe=14, ema="emaHigh")
-                
-        r.append(new_data) # Append latest data (aproaching closing time)
-        emaHigh = ema(r, i=-1, timeframe=14, ema="emaHigh")
-        emaLow = ema(r, i=-1, timeframe=7, ema="emaLow")
-        r[-1]["emaHigh"], r[-1]["emaLow"] = emaHigh, emaLow
-        
-        # # Calculate slope  data
-        slope= np.gradient([i["open"] for i in r])[-1]
-
-        print(time.time() - startTime)
-        return {"open" : r[-1]["open"], "emaLow" : r[-1]["emaLow"], "emaHigh" : r[-1]["emaHigh"], "slope" : slope}
-    except Exception as e:
-        print("NSDQ Data Error: ", e)
-        pass
+alpaca_url = "https://api.alpaca.markets/v2"
+header = {"accept": "application/json", "APCA-API-KEY-ID": api.alpaca_api, "APCA-API-SECRET-KEY": api.alpaca_secret}
 
 # Calculate EWMA
 def ema(data, timeframe, ema ,i):
@@ -54,52 +18,58 @@ def ema(data, timeframe, ema ,i):
 
 
 # Call for current price
-def current_price(ticker, asset_class="stocks"):
+def current_price(symbol):
     try:
-        url = f"https://api.nasdaq.com/api/quote/{ticker}/info?assetclass={asset_class}"
-        headers = {'user-agent' : "-"}
-        r = requests.get(url, headers=headers).json()['data']
-        return round(float(r['primaryData']['lastSalePrice'].strip('$')), 2)
+        url = f"https://data.alpaca.markets/v2/stocks/{symbol}/trades/latest"
+        r = req.get(url, headers=headers)
+        return r.json()
     except Exception as e:
         print("Current Price Error:", e)
         pass
 
+# Call for historical data
+def historical_data(symbol):
+    try:
+        today = dt.today().replace(tzinfo=pytz.timezone('US/Eastern')).date()
+        start = today - relativedelta(years=10)
+        url = "https://data.alpaca.markets/v2"
+        end = today
+        params = {
+            "start" : start,
+            "timeframe" : "1Day",
+            "limit" : 10000
+        }
+        r = req.get(url + f"/stocks/{symbol.upper()}/bars", headers=headers, params=params)
+        return r.json()["bars"]
+    except Exception as e:
+        print("Historical Data Error:", e)
+        pass
+
 # Call for order
-def order(ticker, qty, order, api):
+def orders(symbol, qty, order):
     try:
         side = "buy" if order else "sell"
-        url = alpaca_url
         post = "/v2/orders"
-        headers = {
-            "APCA-API-KEY-ID" : api.alpaca_api,
-            "APCA-API-SECRET-KEY" : api.alpaca_secret,
-        }
         params = {
-            "symbol"        :   ticker.upper(),
+            "symbol"        :   symbol.upper(),
             "qty"           :   str(qty),
             "side"          :   side,
             "type"          :   "market",
             "time_in_force" :   "day"
         }
-        r = requests.post(url + post, headers=headers, json=params)
+        r = req.post(alpaca_url + post, headers=headers, json=params)
         print("Status Code:", r.status_code)
     except Exception as e:
         print("Order Error:", e)
         pass
 
 # Call to list bought stocks
-def stock_list(api):
+def positions():
     try:
-        url = alpaca_url
-        post = "/v2/positions"
-        headers = {
-            "APCA-API-KEY-ID" : api.alpaca_api,
-            "APCA-API-SECRET-KEY" : api.alpaca_secret,
-        }
-        r = requests.get(url + post, headers=headers).json()
-        return r
+        r = req.get(alpaca_url + "/positions", headers=headers)
+        return r.json()
     except Exception as e:
-        print("Stock List Error:", e)
+        print("Positions Error:", e)
         pass
 
 # Call for stock quantity bought
@@ -118,45 +88,19 @@ def qty(ticker, api):
         pass
 
 # Call for buying power
-def money(api):
+def buying_power():
     try:
-        url = alpaca_url
-        post = "/v2/account"
-        headers = {
-            "APCA-API-KEY-ID" : api.alpaca_api,
-            "APCA-API-SECRET-KEY" : api.alpaca_secret,
-        }
-        r = requests.get(url + post, headers=headers).json()["buying_power"]
-        money = round(float(r), 2)
-        return money
+        r = req.get(alpaca_url + "/account", headers=headers)
+        return float(r.json()['cash'])
     except Exception as e:
         print("Buying Power Error:", e)
         pass
 
-# Call for open/close time (params: "Open" or "Clos" only, case senstive and no 'e' for "Clos")
-def market_hour(market_time):
+# Call for clock
+def clock():
     try:
-        url = "https://api.nasdaq.com/api/market-info"
-        headers = {'user-agent' : "-"}
-        r = requests.get(url, headers=headers).json()['data']
-        hour = dt.datetime.strptime(r[f'market{market_time}ingTime'].strip(' ET'),"%b %d, %Y %I:%M %p")
-        return hour
+        r = req.get(alpaca_url + "/clock", headers=headers)
+        return r.json()
     except Exception as e:
-        print("Market time Error:", e)
-        pass
-
-# Call for next open time
-def next_open_time(api):
-    try:
-        url = alpaca_url
-        post = f"/v2/clock"
-        headers = {
-            "APCA-API-KEY-ID" : api.alpaca_api,
-            "APCA-API-SECRET-KEY" : api.alpaca_secret,
-        }
-        r = requests.get(url + post, headers=headers).json()
-        next_open = dt.datetime.strptime(r['next_open'][:-6],"%Y-%m-%dT%H:%M:%S")
-        return next_open
-    except Exception as e:
-        print("Next open time Error:", e)
+        print("Clock Error:", e)
         pass
