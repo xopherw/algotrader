@@ -1,11 +1,15 @@
-import requests as req, numpy as np, pandas as pd, pytz, datetime as dt, api
+import requests as req, numpy as np, pandas as pd, pytz, datetime as dt, os
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
+from dotenv import load_dotenv
 
-#### Constant  https://data.alpaca.markets/v2/stocks/auctions
+load_dotenv()
 
+#### Constant
+api_key = os.getenv("API_KEY")
+api_secret = os.getenv("API_SECRET")
 alpaca_url = "https://api.alpaca.markets/v2"
-header = {"accept": "application/json", "APCA-API-KEY-ID": api.alpaca_api, "APCA-API-SECRET-KEY": api.alpaca_secret}
+headers = {"accept": "application/json", "APCA-API-KEY-ID": api_key, "APCA-API-SECRET-KEY": api_secret}
 
 # Calculate EWMA
 def ema(data, timeframe, ema ,i):
