@@ -1,6 +1,5 @@
-.ipynb
-test.py
+*.ipynb
 __pycache__
-.DS_Store
-api.py
+*.DS_Store
 .env
+__pycache__

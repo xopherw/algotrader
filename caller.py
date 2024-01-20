@@ -85,7 +85,7 @@ def qty(ticker, api):
             "APCA-API-KEY-ID" : api.alpaca_api,
             "APCA-API-SECRET-KEY" : api.alpaca_secret,
         }
-        r = requests.get(url + post, headers=headers)
+        r = req.get(url + post, headers=headers)
         return r.json()["qty"] if(r.status_code == 200) else None
     except Exception as e:
         print("Quantity Error:", e)

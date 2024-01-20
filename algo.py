@@ -1,4 +1,4 @@
-import caller, api, time
+import caller, time
 
 def trade(ticker):
 
